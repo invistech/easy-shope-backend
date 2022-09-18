@@ -1,17 +1,31 @@
-import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
-import { DataExtractFromTokenInterceptor } from 'src/@domain/extensions/data-extract-from-token.interceptor';
-import { JwtAuthGuard } from 'src/@domain/guards/jwt-auth.guard';
-import { CollectionService } from './collection.service';
-import { CreateCollectionDto } from './dto/create-collection.dto';
-import { UpdateCollectionDto } from './dto/update-collection.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Headers,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
+import { DataExtractFromTokenInterceptor } from "src/@domain/extensions/data-extract-from-token.interceptor";
+import { JwtAuthGuard } from "src/@domain/guards/jwt-auth.guard";
+import { CollectionService } from "./collection.service";
+import { CreateCollectionDto } from "./dto/create-collection.dto";
+import { UpdateCollectionDto } from "./dto/update-collection.dto";
 @UseInterceptors(DataExtractFromTokenInterceptor)
-@Controller('collections')
+@Controller("collections")
 export class CollectionController {
-  constructor(private readonly collectionService: CollectionService) { }
+  constructor(private readonly collectionService: CollectionService) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Headers() auth: any, @Body() createCollectionDto: CreateCollectionDto) {
+  async create(
+    @Headers() auth: any,
+    @Body() createCollectionDto: CreateCollectionDto
+  ) {
     createCollectionDto.adminId = await auth.adminUserData.userId;
     return await this.collectionService.create(createCollectionDto);
   }
@@ -23,18 +37,21 @@ export class CollectionController {
     return await this.collectionService.findAll(adminId);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.collectionService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCollectionDto: UpdateCollectionDto) {
+  @Patch(":id")
+  update(
+    @Param("id") id: string,
+    @Body() updateCollectionDto: UpdateCollectionDto
+  ) {
     return this.collectionService.update(+id, updateCollectionDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.collectionService.remove(+id);
   }
 }

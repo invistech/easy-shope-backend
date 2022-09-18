@@ -1,8 +1,8 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { VarientController } from './varient.controller';
-import { VarientService } from './varient.service';
+import { Test, TestingModule } from "@nestjs/testing";
+import { VarientController } from "./varient.controller";
+import { VarientService } from "./varient.service";
 
-describe('VarientController', () => {
+describe("VarientController", () => {
   let controller: VarientController;
 
   beforeEach(async () => {
@@ -14,7 +14,7 @@ describe('VarientController', () => {
     controller = module.get<VarientController>(VarientController);
   });
 
-  it('should be defined', () => {
+  it("should be defined", () => {
     expect(controller).toBeDefined();
   });
 });

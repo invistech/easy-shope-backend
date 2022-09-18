@@ -1,24 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
-import { PrismaService } from 'src/prisma.service';
-import { UpdateVarientUnitDto } from './dto/update-varient-unit.dto';
+import { Injectable } from "@nestjs/common";
+import { Prisma } from "@prisma/client";
+import { PrismaService } from "src/prisma.service";
+import { UpdateVarientUnitDto } from "./dto/update-varient-unit.dto";
 
 @Injectable()
 export class VarientUnitService {
-  constructor(
-    private prismaService: PrismaService
-  ) { }
+  constructor(private prismaService: PrismaService) {}
   async create(data: Prisma.VarientUnitCreateInput) {
-    const response = await this.prismaService.varientUnit.create({ data })
+    const response = await this.prismaService.varientUnit.create({ data });
     return await {
-      message: 'Varient unit created successfully.',
+      message: "Varient unit created successfully.",
       id: response.id,
-    }
+    };
   }
 
   async findAll(_adminId: number) {
     return await this.prismaService.varientUnit.findMany({
-      where: { adminId: _adminId }
+      where: { adminId: _adminId },
     });
   }
 
