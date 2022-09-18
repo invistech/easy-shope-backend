@@ -6,4 +6,5 @@ export class CreateItemTypeDto {
     @IsDefined()
     @IsString()
     itemName!: string;
+    adminId!: number;
 }

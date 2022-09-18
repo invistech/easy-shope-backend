@@ -6,6 +6,21 @@ datasource db {
   provider = "postgresql"
   url      = env("LOCAL_DATABASE_URL")
 }
+generator class_validator {
+  provider = "prisma-class-validator-generator"
+  output   = "./generated-models"
+}
+
+generator dbml {
+  provider   = "prisma-dbml-generator"
+  output     = "../dbml"
+  outputName = "easyshop.dbml"
+}
+
+generator erd {
+  provider = "prisma-erd-generator"
+  output   = "../EASY_SHOP_ERD.svg"
+}
 
 model AdminUser {
   id           Int      @id @default(autoincrement())

@@ -1,15 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { CreateItemTypeDto } from './dto/create-item-type.dto';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
 import { UpdateItemTypeDto } from './dto/update-item-type.dto';
 
 @Injectable()
 export class ItemTypeService {
-  create(createItemTypeDto: CreateItemTypeDto) {
-    return 'This action adds a new itemType';
+  constructor(
+    private prismaService: PrismaService
+  ) { }
+  async create(data: Prisma.ItemTypeCreateInput) {
+    const response = await this.prismaService.itemType.create({ data });
+    return await {
+      message: 'Item type created successfully.',
+      id: response.id,
+    }
   }
 
-  findAll() {
-    return `This action returns all itemType`;
+  async findAll(_adminId: number) {
+    return await this.prismaService.itemType.findMany({
+      where: { adminId: _adminId }
+    });
   }
 
   findOne(id: number) {

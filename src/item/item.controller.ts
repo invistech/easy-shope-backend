@@ -1,5 +1,4 @@
 import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
 import { DataExtractFromTokenInterceptor } from 'src/@domain/extensions/data-extract-from-token.interceptor';
 import { JwtAuthGuard } from 'src/@domain/guards/jwt-auth.guard';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -9,7 +8,7 @@ import { ItemService } from './item.service';
 @UseInterceptors(DataExtractFromTokenInterceptor)
 @Controller('items')
 export class ItemController {
-  constructor(private readonly itemService: ItemService, private jwtService: JwtService) { }
+  constructor(private readonly itemService: ItemService) { }
 
   @UseGuards(JwtAuthGuard)
   @Post()

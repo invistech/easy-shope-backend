@@ -1,20 +1,27 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, UseGuards, UseInterceptors } from '@nestjs/common';
+import { DataExtractFromTokenInterceptor } from 'src/@domain/extensions/data-extract-from-token.interceptor';
+import { JwtAuthGuard } from 'src/@domain/guards/jwt-auth.guard';
 import { CreateItemTypeDto } from './dto/create-item-type.dto';
 import { UpdateItemTypeDto } from './dto/update-item-type.dto';
 import { ItemTypeService } from './item-type.service';
 
+@UseInterceptors(DataExtractFromTokenInterceptor)
 @Controller('item-types')
 export class ItemTypeController {
   constructor(private readonly itemTypeService: ItemTypeService) { }
 
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createItemTypeDto: CreateItemTypeDto) {
+  async create(@Headers() auth: any, @Body() createItemTypeDto: CreateItemTypeDto) {
+    createItemTypeDto.adminId = await auth.adminUserData.userId;
     return this.itemTypeService.create(createItemTypeDto);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.itemTypeService.findAll();
+  async findAll(@Headers() auth: any) {
+    const adminId: number = await auth.adminUserData.userId;
+    return this.itemTypeService.findAll(adminId);
   }
 
   @Get(':id')
