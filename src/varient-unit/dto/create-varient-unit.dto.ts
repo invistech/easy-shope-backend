@@ -16,5 +16,7 @@ export class CreateVarientUnitDto {
     @IsDefined()
     @IsString()
     unitName!: string;
+
+    adminId: number;
 }
 
