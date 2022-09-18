@@ -1,5 +1,6 @@
 import { Body, Controller, Delete, Get, Headers, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { GetCurrentAdminUser } from 'src/@domain/extensions/getcurrentadminuser.decorator';
 import { JwtAuthGuard } from 'src/@domain/guards/jwt-auth.guard';
 import { CreateItemDto } from './dto/create-item.dto';
 import { UpdateItemDto } from './dto/update-item.dto';
@@ -11,8 +12,8 @@ export class ItemController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Headers() auth: any, @Body() createItemDto: CreateItemDto) {
-
+  async create(@GetCurrentAdminUser() token: any, @Headers() auth: any, @Body() createItemDto: CreateItemDto) {
+    console.log(token)
     const userData = await this.jwtService.decode(
       auth.authorization.replace('Bearer ', ''),
     );
