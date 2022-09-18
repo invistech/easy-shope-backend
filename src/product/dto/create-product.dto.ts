@@ -21,5 +21,6 @@ export class CreateProductDto {
     @IsDefined()
     @IsInt()
     itemIds!: number;
+    adminId!: number;
 }
 
