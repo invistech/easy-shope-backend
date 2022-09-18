@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
-import { UpdateItemDto } from './dto/update-item.dto';
 
 @Injectable()
 export class ItemService {
@@ -16,16 +15,27 @@ export class ItemService {
     }
   }
 
-  findAll() {
-    return `This action returns all item`;
+  async findAllItemServiceFn(adminId: number) {
+    return this.prismaService.item.findMany({
+      where: {
+        adminId: adminId
+      }
+    })
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} item`;
+  async findOneItemServiceFn(adminId: number, id: number) {
+    return await this.prismaService.item.findFirst({
+      where: {
+        adminId: adminId,
+        id: id,
+      }
+    })
   }
 
-  update(id: number, updateItemDto: UpdateItemDto) {
-    return `This action updates a #${id} item`;
+  async updateItemServiceFn(adminId: number, id: number, data: Prisma.ItemUpdateInput) {
+    return await this.prismaService.item.update({
+      where: { id: id }, data
+    })
   }
 
   remove(id: number) {

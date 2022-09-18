@@ -1,4 +1,7 @@
 import { Module } from "@nestjs/common";
+import { APP_INTERCEPTOR } from "@nestjs/core";
+import { JwtModule } from "@nestjs/jwt";
+import { AppHttpLoggerInterceptor } from "./@domain/extensions/app-http-logger.interceptor";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from './auth/auth.module';
@@ -10,8 +13,28 @@ import { VarientUnitModule } from './varient-unit/varient-unit.module';
 import { VarientModule } from './varient/varient.module';
 
 @Module({
-  imports: [ProductModule, VarientModule, ItemModule, ItemTypeModule, VarientUnitModule, CollectionModule, AuthModule],
+  imports: [
+    ProductModule,
+    VarientModule,
+    ItemModule,
+    ItemTypeModule,
+    VarientUnitModule,
+    CollectionModule,
+    AuthModule,
+    JwtModule,
+  ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: AppHttpLoggerInterceptor,
+    }
+    // JwtService,
+    // {
+    //   provide: APP_INTERCEPTOR,
+    //   useClass: DataExtractFromTokenInterceptor,
+    // }
+  ],
 })
 export class AppModule { }
