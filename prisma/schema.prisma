@@ -1,0 +1,120 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LOCAL_DATABASE_URL")
+}
+
+model AdminUser {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  password     String
+  passwordHash String
+  email        String   @unique
+  mobileNumber String
+  firstName    String
+  lastName     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Collection {
+  id          Int      @id @default(autoincrement())
+  title       String   @default("Empty product title")
+  description String   @default("Empty product description")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  productIds  Int[]
+  adminId     Int
+
+  @@index([adminId])
+}
+
+model Customer {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  password     String
+  passwordHash String
+  firstName    String
+  lastName     String
+  email        String   @unique
+  mobileNumber String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Item {
+  id              Int      @id @default(autoincrement())
+  title           String   @default("Empty item title")
+  description     String   @default("Empty item description")
+  itemTypeId      Int
+  itemTypeName    String
+  buyingPrice     Int
+  additionalCost  Int
+  totalCost       Int
+  retailPrice     Int
+  discountedPrice Int
+  wholesalePrice  Int
+  invoicePrice    Int
+  featuredImage   String
+  productImage    String
+  weight          Int
+  unit            Int
+  volume          Int
+  quantity        Int
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  adminId         Int
+
+  @@index([adminId])
+}
+
+model ItemType {
+  id        Int      @id @default(autoincrement())
+  itemName  String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  adminId   Int
+
+  @@index([adminId])
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  title       String   @default("Empty product title")
+  description String   @default("Empty product description")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  varientIds  Int[]
+  itemIds     Int[]
+  adminId     Int
+
+  @@index([adminId])
+}
+
+model Varient {
+  id             Int      @id @default(autoincrement())
+  varientName    String
+  itemTypeId     Int
+  itemTypeName   String
+  varientUnitIds Int[]
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  adminId        Int
+
+  @@index([adminId])
+}
+
+model VarientUnit {
+  id           Int      @id @default(autoincrement())
+  itemTypeId   Int
+  itemTypeName String
+  unitName     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  adminId      Int
+
+  @@index([adminId])
+}
