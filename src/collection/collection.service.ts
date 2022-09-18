@@ -1,15 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCollectionDto } from './dto/create-collection.dto';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
 import { UpdateCollectionDto } from './dto/update-collection.dto';
 
 @Injectable()
 export class CollectionService {
-  create(createCollectionDto: CreateCollectionDto) {
-    return 'This action adds a new collection';
+
+  constructor(
+    private prismaService: PrismaService
+  ) { }
+
+  async create(data: Prisma.CollectionCreateInput) {
+    const response = await this.prismaService.collection.create({ data });
+    return await {
+      message: 'Collection created successfully.',
+      id: response.id,
+    }
   }
 
-  findAll() {
-    return `This action returns all collection`;
+  async findAll(_adminId: number) {
+    return await this.prismaService.collection.findMany({
+      where: { adminId: _adminId }
+    })
   }
 
   findOne(id: number) {

@@ -16,4 +16,6 @@ export class CreateCollectionDto {
     @IsDefined()
     @IsInt()
     productIds!: number;
+
+    adminId!: number;
 }
