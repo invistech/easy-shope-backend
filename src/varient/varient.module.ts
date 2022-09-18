@@ -1,9 +1,12 @@
 import { Module } from '@nestjs/common';
-import { VarientService } from './varient.service';
+import { JwtService } from '@nestjs/jwt';
+import { AuthService } from 'src/auth/auth.service';
+import { PrismaService } from 'src/prisma.service';
 import { VarientController } from './varient.controller';
+import { VarientService } from './varient.service';
 
 @Module({
   controllers: [VarientController],
-  providers: [VarientService]
+  providers: [VarientService, PrismaService, AuthService, JwtService]
 })
-export class VarientModule {}
+export class VarientModule { }

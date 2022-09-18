@@ -21,4 +21,5 @@ export class CreateVarientDto {
     @IsDefined()
     @IsInt()
     varientUnitIds!: number;
+    adminId: number;
 }

@@ -1,15 +1,25 @@
 import { Injectable } from '@nestjs/common';
-import { CreateVarientDto } from './dto/create-varient.dto';
+import { Prisma } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
 import { UpdateVarientDto } from './dto/update-varient.dto';
 
 @Injectable()
 export class VarientService {
-  create(createVarientDto: CreateVarientDto) {
-    return 'This action adds a new varient';
+  constructor(
+    private prismaService: PrismaService
+  ) { }
+  async create(data: Prisma.VarientCreateInput) {
+    const response = await this.prismaService.varient.create({ data });
+    return await {
+      message: 'Varient created successfully.',
+      id: response.id,
+    }
   }
 
-  findAll() {
-    return `This action returns all varient`;
+  async findAll(_adminId: number) {
+    return await this.prismaService.varient.findMany({
+      where: { adminId: _adminId }
+    })
   }
 
   findOne(id: number) {
