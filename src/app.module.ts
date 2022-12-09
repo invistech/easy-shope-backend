@@ -1,7 +1,8 @@
 import { Module } from "@nestjs/common";
 import { APP_INTERCEPTOR } from "@nestjs/core";
-import { JwtModule } from "@nestjs/jwt";
+import { JwtModule, JwtService } from "@nestjs/jwt";
 import { AppHttpLoggerInterceptor } from "./@domain/extensions/app-http-logger.interceptor";
+import { DataExtractFromTokenInterceptor } from "./@domain/extensions/data-extract-from-token.interceptor";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { AuthModule } from "./auth/auth.module";
@@ -35,6 +36,6 @@ import { VarientModule } from "./varient/varient.module";
     //   provide: APP_INTERCEPTOR,
     //   useClass: DataExtractFromTokenInterceptor,
     // }
-  ],
+  ]
 })
 export class AppModule {}
