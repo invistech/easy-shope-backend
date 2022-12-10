@@ -24,8 +24,17 @@ export class ItemTypeService {
     return `This action returns a #${id} itemType`;
   }
 
-  update(id: number, updateItemTypeDto: UpdateItemTypeDto) {
-    return `This action updates a #${id} itemType`;
+  async update(id: number, data: Prisma.ItemTypeUpdateInput) {
+    const response = await this.prismaService.itemType.update({
+      where: {id},
+      data: {
+        itemName: data.itemName
+      }
+    })
+    return await {
+      message: "Item type updated successfully.",
+      id: response.id,
+    };
   }
 
   remove(id: number) {

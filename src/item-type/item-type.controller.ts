@@ -44,11 +44,11 @@ export class ItemTypeController {
   }
 
   @Patch(":id")
-  update(
+  async update(
     @Param("id") id: string,
     @Body() updateItemTypeDto: UpdateItemTypeDto
   ) {
-    return this.itemTypeService.update(+id, updateItemTypeDto);
+    return await this.itemTypeService.update(+id, updateItemTypeDto);
   }
 
   @Delete(":id")

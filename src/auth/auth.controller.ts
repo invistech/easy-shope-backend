@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -23,39 +25,48 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private jwtService: JwtService
-  ) {}
+  ) { }
 
   @Post("admin/registration")
   async createAdmin(@Body() createAdminUserAuthDto: CreateAdminUserAuthDto) {
-    const _hash = await bcrypt.genSalt();
-    const _hashPassword = await bcrypt.hash(
-      createAdminUserAuthDto.password,
-      _hash
-    );
-    const _data = await {
-      username: createAdminUserAuthDto.username,
-      password: _hashPassword,
-      email: createAdminUserAuthDto.email,
-      mobileNumber: createAdminUserAuthDto.mobileNumber,
-      firstName: createAdminUserAuthDto.firstName,
-      lastName: createAdminUserAuthDto.lastName,
-      passwordHash: _hash,
-    };
-    const result = await this.authService.createAdminServiceFn(_data);
-    const genToken = await this.jwtService.sign(
-      {
-        username: result.username,
-        email: result.email,
-        userId: result.id,
-      },
-      jwtConstants
-    );
-    console.log({
-      accessToken: await genToken,
-    });
-    return {
-      accessToken: await genToken,
-    };
+    if (Object.keys(createAdminUserAuthDto).length === 0) {
+      console.log(Object.keys(createAdminUserAuthDto))
+      throw new HttpException(
+        { message: "Empty payload !" },
+        HttpStatus.UNPROCESSABLE_ENTITY
+      );
+    } else {
+      console.log(createAdminUserAuthDto)
+      const _hash = await bcrypt.genSalt();
+      const _hashPassword = await bcrypt.hash(
+        createAdminUserAuthDto.password,
+        _hash
+      );
+      const _data = await {
+        username: createAdminUserAuthDto.username,
+        password: await _hashPassword,
+        email: createAdminUserAuthDto.email,
+        mobileNumber: createAdminUserAuthDto.mobileNumber,
+        firstName: createAdminUserAuthDto.firstName,
+        lastName: createAdminUserAuthDto.lastName,
+        passwordHash: _hash,
+      };
+      const result = await this.authService.createAdminServiceFn( await _data);
+      const genToken = await this.jwtService.sign(
+        {
+          username: result.username,
+          email: result.email,
+          userId: result.id,
+        },
+        jwtConstants
+      );
+      console.log({
+        accessToken: await genToken,
+      });
+      return {
+        accessToken: await genToken,
+      };
+    }
   }
   @Post("admin/login")
   async loginAdmin(@Body() loginAdminUserAuthDto: LoginAdminUserAuthDto) {

@@ -16,48 +16,57 @@ export class AuthService {
     private jwtService: JwtService
   ) { }
   async createAdminServiceFn(data) {
-    const findAdminEmail = await this.prismaService.adminUser.findMany({
-      where: { email: { equals: await data.email } },
-    });
-    const findAdminUsername = await this.prismaService.adminUser.findMany({
-      where: { username: await data.username },
-    });
-    if (
-      (await findAdminEmail.length) === 0 &&
-      (await findAdminUsername.length) === 0
-    ) {
-      const result = await this.prismaService.adminUser.create({ data });
-      return await result;
-    } else if (findAdminEmail.length !== 0) {
-      console.log(findAdminEmail);
+    if (Object.keys(data).length === 0) {
+      console.log(Object.keys(data))
       throw new HttpException(
-        {
-          email: data.email,
-          message: "This email already exist. Try another",
-        },
-        HttpStatus.NOT_ACCEPTABLE
-      );
-    } else if (findAdminUsername.length !== 0) {
-      throw new HttpException(
-        {
-          email: data.username,
-          message: "This username already exist. Try another",
-        },
-        HttpStatus.NOT_ACCEPTABLE
+        { message: "Empty payload !" },
+        HttpStatus.UNPROCESSABLE_ENTITY
       );
     } else {
-      throw new HttpException(
-        {
-          message: "Empty content",
-        },
-        HttpStatus.NO_CONTENT
-      );
+
+      const findAdminEmail = await this.prismaService.adminUser.findMany({
+        where: { email: { equals: await data.email } },
+      });
+      const findAdminUsername = await this.prismaService.adminUser.findMany({
+        where: { username: await data.username },
+      });
+      if (
+        (await findAdminEmail.length) === 0 &&
+        (await findAdminUsername.length) === 0
+      ) {
+        const result = await this.prismaService.adminUser.create({ data });
+        return await result;
+      } else if (findAdminEmail.length !== 0) {
+        console.log(findAdminEmail);
+        throw new HttpException(
+          {
+            email: data.email,
+            message: "This email already exist. Try another",
+          },
+          HttpStatus.NOT_ACCEPTABLE
+        );
+      } else if (findAdminUsername.length !== 0) {
+        throw new HttpException(
+          {
+            email: data.username,
+            message: "This username already exist. Try another",
+          },
+          HttpStatus.NOT_ACCEPTABLE
+        );
+      } else {
+        throw new HttpException(
+          {
+            message: "Empty content",
+          },
+          HttpStatus.NO_CONTENT
+        );
+      }
     }
   }
 
   async loginAdminServiceFn(
     data: LoginAdminUserAuthDto
-  ): Promise<IValidCridential | {[key: string]: string}> {
+  ): Promise<IValidCridential | { [key: string]: string }> {
     if (Object.keys(data).length === 0) {
       console.log(Object.keys(data))
       // return ({message: "Empty !"})
@@ -66,7 +75,7 @@ export class AuthService {
         HttpStatus.UNPROCESSABLE_ENTITY
       );
     } else {
-      
+
       const isValidAdminUser = await this.prismaService.adminUser.findUnique({
         where: {
           email: data.email,
