@@ -15,10 +15,14 @@ import { JwtAuthGuard } from "src/@domain/guards/jwt-auth.guard";
 import { CollectionService } from "./collection.service";
 import { CreateCollectionDto } from "./dto/create-collection.dto";
 import { UpdateCollectionDto } from "./dto/update-collection.dto";
+import { ProductService } from '../product/product.service';
 @UseInterceptors(DataExtractFromTokenInterceptor)
 @Controller("collections")
 export class CollectionController {
-  constructor(private readonly collectionService: CollectionService) {}
+  constructor(
+    private readonly collectionService: CollectionService,
+    private readonly productService: ProductService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -34,7 +38,17 @@ export class CollectionController {
   @Get()
   async findAll(@Headers() auth: any) {
     const adminId: number = await auth.adminUserData.userId;
-    return await this.collectionService.findAll(adminId);
+    const _products = await this.productService.findAll(adminId);
+    const _collections = await this.collectionService.findAll(adminId);
+    const response = await _collections.map(collection => {
+      return {
+        ...collection,
+        products: collection.productIds.map(id => {
+          return _products.find(product => product.id === id);
+        })
+      }
+    })
+    return await response;
   }
 
   @Get(":id")
