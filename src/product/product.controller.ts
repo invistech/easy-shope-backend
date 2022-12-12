@@ -15,10 +15,18 @@ import { JwtAuthGuard } from "src/@domain/guards/jwt-auth.guard";
 import { CreateProductDto } from "./dto/create-product.dto";
 import { UpdateProductDto } from "./dto/update-product.dto";
 import { ProductService } from "./product.service";
+import { ItemService } from '../item/item.service';
+import { VarientService } from '../varient/varient.service';
+import { VarientUnitService } from '../varient-unit/varient-unit.service';
 @UseInterceptors(DataExtractFromTokenInterceptor)
 @Controller("products")
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(
+    private readonly productService: ProductService,
+    private readonly itemService: ItemService,
+    private readonly varientService: VarientService,
+    private readonly varientUnitService: VarientUnitService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -34,7 +42,29 @@ export class ProductController {
   @Get()
   async findAll(@Headers() auth: any) {
     const adminId: number = await auth.adminUserData.userId;
-    return await this.productService.findAll(adminId);
+    const _varients = await this.varientService.findAll(adminId);
+    const _items = await this.itemService.findAllItemServiceFn(adminId);
+    const _varientUnites = await this.varientUnitService.findAll(adminId);
+    const _products = await this.productService.findAll(adminId)
+    const response = await _products.map(product => {
+      return {
+        ...product,
+        items: product.itemIds.map(id => {
+          return _items.find(item => item.id === id)
+        }),
+        varients: product.varientIds.map(id => {
+          return _varients.find(varient => varient.id === id)
+        }).map(varient => {
+          return {
+            ...varient,
+            varientUnits: varient.varientUnitIds.map(id => {
+              return _varientUnites.find(unit => unit.id === id)
+            })
+          }
+        })
+      }
+    })
+    return await response;
   }
 
   @Get(":id")
