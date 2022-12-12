@@ -15,6 +15,9 @@ export class VarientService {
   }
 
   async findAll(_adminId: number) {
+    // const varientUnits = await this.prismaService.varientUnit.findMany({
+    //   where: {adminId: _adminId}
+    // })
     return await this.prismaService.varient.findMany({
       where: { adminId: _adminId },
     });

@@ -15,10 +15,14 @@ import { JwtAuthGuard } from "src/@domain/guards/jwt-auth.guard";
 import { CreateVarientDto } from "./dto/create-varient.dto";
 import { UpdateVarientDto } from "./dto/update-varient.dto";
 import { VarientService } from "./varient.service";
+import { VarientUnitService } from '../varient-unit/varient-unit.service';
 @UseInterceptors(DataExtractFromTokenInterceptor)
 @Controller("varients")
 export class VarientController {
-  constructor(private readonly varientService: VarientService) {}
+  constructor(
+    private readonly varientService: VarientService,
+    private readonly varientUnitService:VarientUnitService
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
@@ -34,7 +38,17 @@ export class VarientController {
   @Get()
   async findAll(@Headers() auth: any) {
     const adminId: number = await auth.adminUserData.userId;
-    return await this.varientService.findAll(adminId);
+    const varientUnits = await this.varientUnitService.findAll(adminId);
+    const varients = await this.varientService.findAll(adminId);
+    const response = await varients.map(varient => {
+      return {
+        ...varient,
+        varientUnits: varient.varientUnitIds.map(unit => {
+          return varientUnits.find(u => u.id === unit);
+        })
+      }
+    })
+    return await response;
   }
 
   @Get(":id")
