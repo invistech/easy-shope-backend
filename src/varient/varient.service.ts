@@ -15,12 +15,21 @@ export class VarientService {
   }
 
   async findAll(_adminId: number) {
-    // const varientUnits = await this.prismaService.varientUnit.findMany({
-    //   where: {adminId: _adminId}
-    // })
-    return await this.prismaService.varient.findMany({
+    const varientUnits = await this.prismaService.varientUnit.findMany({
+      where: {adminId: _adminId}
+    })
+    const varients = await this.prismaService.varient.findMany({
       where: { adminId: _adminId },
     });
+    const response = await varients.map(varient => {
+      return {
+        ...varient,
+        varientUnits: varient.varientUnitIds.map(unit => {
+          return varientUnits.find(u => u.id === unit);
+        })
+      }
+    })
+    return await response;
   }
 
   findOne(id: number) {

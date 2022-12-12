@@ -38,17 +38,7 @@ export class VarientController {
   @Get()
   async findAll(@Headers() auth: any) {
     const adminId: number = await auth.adminUserData.userId;
-    const varientUnits = await this.varientUnitService.findAll(adminId);
-    const varients = await this.varientService.findAll(adminId);
-    const response = await varients.map(varient => {
-      return {
-        ...varient,
-        varientUnits: varient.varientUnitIds.map(unit => {
-          return varientUnits.find(u => u.id === unit);
-        })
-      }
-    })
-    return await response;
+    return await this.varientService.findAll(adminId);
   }
 
   @Get(":id")

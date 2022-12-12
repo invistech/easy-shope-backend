@@ -15,9 +15,37 @@ export class ProductService {
   }
 
   async findAll(_adminId: number) {
-    return await this.prismaService.product.findMany({
+    const _varients = await this.prismaService.varient.findMany({
       where: { adminId: _adminId },
     });
+    const _items = await this.prismaService.item.findMany({
+      where: { adminId: _adminId },
+    });
+    const _varientUnites = await this.prismaService.varientUnit.findMany({
+      where: { adminId: _adminId },
+    });
+    const _products = await this.prismaService.product.findMany({
+      where: { adminId: _adminId },
+    });
+    const response = await _products.map(product => {
+      return {
+        ...product,
+        items: product.itemIds.map(id => {
+          return _items.find(item => item.id === id)
+        }),
+        varients: product.varientIds.map(id => {
+          return _varients.find(varient => varient.id === id)
+        }).map(varient => {
+          return {
+            ...varient,
+            varientUnits: varient.varientUnitIds.map(id => {
+              return _varientUnites.find(unit => unit.id === id)
+            })
+          }
+        })
+      }
+    });
+    return response;
   }
 
   findOne(id: number) {

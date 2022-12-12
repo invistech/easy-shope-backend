@@ -10,6 +10,6 @@ import { VarientUnitService } from '../varient-unit/varient-unit.service';
 
 @Module({
   controllers: [ProductController],
-  providers: [ProductService, PrismaService, AuthService, JwtService, ItemService, VarientService, VarientUnitService,VarientUnitService],
+  providers: [ProductService, PrismaService, AuthService, JwtService],
 })
 export class ProductModule {}
