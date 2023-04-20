@@ -1,10 +1,10 @@
-import { IsInt, IsDefined, IsString, IsDate } from "class-validator";
-import "./";
+import { IsString, IsDefined, IsOptional, IsInt, IsDate } from "class-validator";
+import { TypeOfItems, UnitOfItems, Varient } from "./";
 
 export class Item {
     @IsDefined()
-    @IsInt()
-    id!: number;
+    @IsString()
+    id!: string;
 
     @IsDefined()
     @IsString()
@@ -14,13 +14,12 @@ export class Item {
     @IsString()
     description!: string;
 
-    @IsDefined()
-    @IsInt()
-    itemTypeId!: number;
+    @IsOptional()
+    type?: TypeOfItems;
 
     @IsDefined()
     @IsString()
-    itemTypeName!: string;
+    typeId!: string;
 
     @IsDefined()
     @IsInt()
@@ -62,9 +61,8 @@ export class Item {
     @IsInt()
     weight!: number;
 
-    @IsDefined()
-    @IsInt()
-    unit!: number;
+    @IsOptional()
+    unit?: UnitOfItems;
 
     @IsDefined()
     @IsInt()
@@ -85,4 +83,11 @@ export class Item {
     @IsDefined()
     @IsInt()
     adminId!: number;
+
+    @IsDefined()
+    varient!: Varient;
+
+    @IsDefined()
+    @IsString()
+    varientId!: string;
 }

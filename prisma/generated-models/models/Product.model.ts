@@ -1,10 +1,10 @@
-import { IsInt, IsDefined, IsString, IsDate } from "class-validator";
-import "./";
+import { IsString, IsDefined, IsDate, IsInt } from "class-validator";
+import { VarientsOfProducts, Collection } from "./";
 
 export class Product {
     @IsDefined()
-    @IsInt()
-    id!: number;
+    @IsString()
+    id!: string;
 
     @IsDefined()
     @IsString()
@@ -23,8 +23,7 @@ export class Product {
     updatedAt!: Date;
 
     @IsDefined()
-    @IsInt()
-    varientIds!: number;
+    varients!: VarientsOfProducts[];
 
     @IsDefined()
     @IsInt()
@@ -33,4 +32,11 @@ export class Product {
     @IsDefined()
     @IsInt()
     adminId!: number;
+
+    @IsDefined()
+    collection!: Collection;
+
+    @IsDefined()
+    @IsString()
+    collectionId!: string;
 }

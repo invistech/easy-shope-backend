@@ -1,22 +1,17 @@
 import { IsString, IsDefined, IsDate, IsInt } from "class-validator";
-import { Product, CollectionsOfOutlets } from "./";
+import { TypeOfItems } from "./";
 
-export class Collection {
+export class Type {
     @IsDefined()
     @IsString()
     id!: string;
 
     @IsDefined()
     @IsString()
-    title!: string;
+    name!: string;
 
     @IsDefined()
-    @IsString()
-    description!: string;
-
-    @IsDefined()
-    @IsString()
-    images!: string;
+    items!: TypeOfItems[];
 
     @IsDefined()
     @IsDate()
@@ -25,12 +20,6 @@ export class Collection {
     @IsDefined()
     @IsDate()
     updatedAt!: Date;
-
-    @IsDefined()
-    products!: Product[];
-
-    @IsDefined()
-    outlets!: CollectionsOfOutlets[];
 
     @IsDefined()
     @IsInt()

@@ -1,10 +1,10 @@
-import { IsInt, IsDefined, IsString, IsDate } from "class-validator";
+import { IsString, IsDefined, IsDate } from "class-validator";
 import "./";
 
 export class Customer {
     @IsDefined()
-    @IsInt()
-    id!: number;
+    @IsString()
+    id!: string;
 
     @IsDefined()
     @IsString()

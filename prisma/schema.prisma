@@ -1,12 +1,13 @@
 generator client {
-  provider = "prisma-client-js"  
-  binaryTargets = ["native","debian-openssl-1.1.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("LOCAL_DATABASE_URL")
 }
+
 generator class_validator {
   provider = "prisma-class-validator-generator"
   output   = "./generated-models"
@@ -24,7 +25,7 @@ generator erd {
 }
 
 model AdminUser {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(uuid())
   username     String   @unique
   password     String
   passwordHash String
@@ -36,37 +37,103 @@ model AdminUser {
   updatedAt    DateTime @updatedAt
 }
 
+model Store {
+  id          String           @id @default(uuid())
+  title       String
+  description String
+  outlets     OutletsOfStore[]
+}
+
+model Outlet {
+  id         String                 @id @default(uuid())
+  address    AddressesOfOutlets?
+  store      OutletsOfStore?
+  collection CollectionsOfOutlets[]
+}
+
+model OutletsOfStore {
+  store    Store  @relation(fields: [storeId], references: [id])
+  storeId  String
+  outlets  Outlet @relation(fields: [outletId], references: [id])
+  outletId String @unique
+
+  @@id([outletId, storeId])
+}
+
+model AddressesOfOutlets {
+  address   Address @relation(fields: [addressId], references: [id])
+  addressId String
+  outlet    Outlet  @relation(fields: [outletId], references: [id])
+  outletId  String  @unique
+
+  @@id([outletId, addressId])
+}
+
+model Address {
+  id      String               @id @default(uuid())
+  outlets AddressesOfOutlets[]
+}
+
+model CollectionsOfOutlets {
+  collection   Collection @relation(fields: [collectionId], references: [id])
+  collectionId String
+  outlet       Outlet     @relation(fields: [outletId], references: [id])
+  outletId     String
+
+  @@id([outletId, collectionId])
+}
+
 model Collection {
-  id          Int      @id @default(autoincrement())
-  title       String   @default("Empty product title")
-  description String   @default("Empty product description")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  productIds  Int[]
+  id          String                 @id @default(uuid())
+  title       String                 @default("Empty product title")
+  description String                 @default("Empty product description")
+  images      String[]               @default(["No image added yet"])
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  products    Product[]
+  outlets     CollectionsOfOutlets[]
   adminId     Int
 
   @@index([adminId])
 }
 
-model Customer {
-  id           Int      @id @default(autoincrement())
-  username     String   @unique
-  password     String
-  passwordHash String
-  firstName    String
-  lastName     String
-  email        String   @unique
-  mobileNumber String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+model Product {
+  id           String               @id @default(uuid())
+  title        String               @default("Empty product title")
+  description  String               @default("Empty product description")
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  varients     VarientsOfProducts[]
+  itemIds      Int[]
+  adminId      Int
+  collection   Collection           @relation(fields: [collectionId], references: [id])
+  collectionId String
+
+  @@index([adminId])
+}
+
+model Varient {
+  id           String               @id @default(uuid())
+  name         String
+  itemTypeId   Int
+  itemTypeName String
+  unit         UnitOfVarient?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  products     VarientsOfProducts[]
+  productId    String
+  items        Item[]
+  adminId      Int
+
+  @@index([adminId])
 }
 
 model Item {
-  id              Int      @id @default(autoincrement())
-  title           String   @default("Empty item title")
-  description     String   @default("Empty item description")
-  itemTypeId      Int
-  itemTypeName    String
+  id              String       @id @default(uuid())
+  title           String       @default("Empty item title")
+  description     String       @default("Empty item description")
+  type            TypeOfItems?
+  typeId          String
   buyingPrice     Int
   additionalCost  Int
   totalCost       Int
@@ -77,60 +144,97 @@ model Item {
   featuredImage   String
   productImage    String
   weight          Int
-  unit            Int
-  volume          Int
-  quantity        Int
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  adminId         Int
+
+  unit UnitOfItems?
+
+  volume    Int
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  adminId   Int
+  varient   Varient  @relation(fields: [varientId], references: [id])
+  varientId String
 
   @@index([adminId])
 }
 
-model ItemType {
-  id        Int      @id @default(autoincrement())
-  itemName  String   @unique
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Unit {
+  id        String          @id @default(uuid())
+  items     UnitOfItems[]
+  unitName  String
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  adminId   Int
+  varients  UnitOfVarient[]
+
+  @@index([adminId])
+}
+
+model Type {
+  id        String        @id @default(uuid())
+  name      String
+  items     TypeOfItems[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
   adminId   Int
 
   @@index([adminId])
 }
 
-model Product {
-  id          Int      @id @default(autoincrement())
-  title       String   @default("Empty product title")
-  description String   @default("Empty product description")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  varientIds  Int[]
-  itemIds     Int[]
-  adminId     Int
-
-  @@index([adminId])
+model Image {
+  id        String   @id @default(uuid())
+  path      String   @unique
+  size      String   @unique
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
-model Varient {
-  id             Int      @id @default(autoincrement())
-  varientName    String
-  itemTypeId     Int
-  itemTypeName   String
-  varientUnitIds Int[]
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  adminId        Int
-
-  @@index([adminId])
-}
-
-model VarientUnit {
-  id           Int      @id @default(autoincrement())
-  itemTypeId   Int
-  itemTypeName String
-  unitName     String
+model Customer {
+  id           String   @id @default(uuid())
+  username     String   @unique
+  password     String
+  passwordHash String
+  firstName    String
+  lastName     String
+  email        String   @unique
+  mobileNumber String
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  adminId      Int
+}
 
-  @@index([adminId])
+// Pivote table for product-varient
+model VarientsOfProducts {
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  varient   Varient @relation(fields: [varientId], references: [id])
+  varientId String
+
+  @@id([productId, varientId])
+}
+
+model UnitOfVarient {
+  varient   Varient @relation(fields: [varientId], references: [id])
+  varientId String  @unique
+  unit      Unit    @relation(fields: [unitId], references: [id])
+  unitId    String
+
+  @@id([varientId, unitId])
+}
+model UnitOfItems {
+  item   Item   @relation(fields: [itemId], references: [id])
+  itemId String @unique
+  unit   Unit   @relation(fields: [unitId], references: [id])
+  unitId String
+
+  @@id([itemId, unitId])
+}
+
+model TypeOfItems {
+  item   Item   @relation(fields: [itemId], references: [id])
+  itemId String @unique
+  type   Type   @relation(fields: [typeId], references: [id])
+  typeId String
+
+  @@id([itemId, typeId])
 }

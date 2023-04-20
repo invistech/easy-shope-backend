@@ -1,14 +1,14 @@
-import { IsInt, IsDefined, IsString, IsDate } from "class-validator";
-import "./";
+import { IsString, IsDefined, IsInt, IsOptional, IsDate } from "class-validator";
+import { UnitOfVarient, VarientsOfProducts, Item } from "./";
 
 export class Varient {
     @IsDefined()
-    @IsInt()
-    id!: number;
+    @IsString()
+    id!: string;
 
     @IsDefined()
     @IsString()
-    varientName!: string;
+    name!: string;
 
     @IsDefined()
     @IsInt()
@@ -18,9 +18,8 @@ export class Varient {
     @IsString()
     itemTypeName!: string;
 
-    @IsDefined()
-    @IsInt()
-    varientUnitIds!: number;
+    @IsOptional()
+    unit?: UnitOfVarient;
 
     @IsDefined()
     @IsDate()
@@ -29,6 +28,16 @@ export class Varient {
     @IsDefined()
     @IsDate()
     updatedAt!: Date;
+
+    @IsDefined()
+    products!: VarientsOfProducts[];
+
+    @IsDefined()
+    @IsString()
+    productId!: string;
+
+    @IsDefined()
+    items!: Item[];
 
     @IsDefined()
     @IsInt()
