@@ -24,6 +24,220 @@ generator erd {
   output   = "../EASY_SHOP_ERD.svg"
 }
 
+model User {
+  id         String      @id @default(uuid())
+  cridential Cridential?
+  role       UserRole[]
+  profile    Profile?
+}
+
+model Cridential {
+  userName     String @unique
+  password     String
+  passwordHash String
+  email        String @unique
+  mobileNumber String
+  user         User   @relation(fields: [userId], references: [id])
+  userId       String @unique
+
+  @@id([userId])
+}
+
+model UserRole {
+  name       String          @unique
+  permission UserPermission?
+  User       User?           @relation(fields: [userId], references: [id])
+  userId     String          @unique
+
+  @@id([userId])
+}
+
+model UserPermission {
+  resources ResourceOfUser[]
+  role      UserRole         @relation(fields: [userId], references: [name])
+  userId    String           @unique
+
+  @@id([userId])
+}
+
+model ResourceOfUser {
+  resource   Resource       @relation(fields: [resourceId], references: [id])
+  resourceId String
+  permission UserPermission @relation(fields: [userId], references: [userId])
+  userId     String
+
+  @@id([userId, resourceId])
+}
+
+model Resource {
+  id          String           @id @default(uuid())
+  path        Json
+  metadata    Json
+  permissions ResourceOfUser[]
+}
+
+model Profile {
+  user         User          @relation(fields: [userId], references: [id])
+  userId       String        @unique
+  userName     String        @unique
+  email        String        @unique
+  mobileNumber String
+  firstName    String
+  lastName     String
+  address      AddressOfUser?
+
+  @@id([userId])
+}
+
+model AddressOfUser {
+  htmlAttributions Json
+  result           ResultOfAddress?  
+  status           Json
+  profile Profile @relation(fields: [userId], references: [userId])
+  userId  String  @unique
+  
+
+  @@id([userId])
+}
+
+model ResultOfAddress {
+  addressComponents        AddressComponentOfAddressResult[]
+  adrAddress               Json
+  businessStatus           Json
+  formattedAddress         Json
+  formattedPhoneNumber     String
+  geometry                 GeometryOfAddressResult?
+  icon                     String
+  iconBackgroundColor      String
+  iconMaskBaseUri          String
+  internationalPhoneNumber String
+  name                     String
+  openingHours             OpeningHoursOfAddressResult?
+  photos                   PhotoOfAddressResult[]
+  placeId                  String
+  plusCode                 PlusCodeOfAddressResult?
+  rating                   Float
+  reference                String
+  reviews                  ReviewOfAddressResult[]
+  types                    Json
+  url                      String
+  userRatingsTotal         Float
+  utcOffset                Float
+  vicinity                 String
+  website                  String
+
+  addressOfUser AddressOfUser @relation(fields: [userId], references: [userId])
+  userId String @unique
+  @@id([userId])
+}
+
+model AddressComponentOfAddressResult {
+  longName String
+  shortName String
+  types Json
+  addressResult ResultOfAddress @relation(fields: [userId], references: [userId])
+  userId String @unique
+  @@id([userId])
+}
+
+model GeometryOfAddressResult {
+  location LoctionOfGeometry?
+  viewport ViewportOfGeometry?
+  addressResult ResultOfAddress @relation(fields: [userId], references: [userId])
+  userId String @unique
+  
+  @@id([userId])
+}
+model LoctionOfGeometry {
+  lat Float
+  lng Float
+  geometry GeometryOfAddressResult @relation(fields: [userId], references: [userId])
+  userId String @unique
+  
+  @@id([userId])
+  
+}
+model NorthestLoctionOfViewport {
+  lat Float
+  lng Float
+  viewport ViewportOfGeometry @relation(fields: [userId], references: [userId])
+  userId String @unique
+  
+  @@id([userId])
+  
+}
+model SouthwestLoctionOfViewport {
+  lat Float
+  lng Float
+  viewport ViewportOfGeometry @relation(fields: [userId], references: [userId])
+  userId String @unique
+  
+  @@id([userId])
+  
+}
+model ViewportOfGeometry {
+  northest NorthestLoctionOfViewport?
+  southwest SouthwestLoctionOfViewport?
+  geometry GeometryOfAddressResult @relation(fields: [userId], references: [userId])
+  userId String @unique
+  
+  @@id([userId])
+}
+model OpeningHoursOfAddressResult {
+  openNow Boolean
+  weekdayText Json
+  periods PeriodOfAddressResult[]
+  addressResult ResultOfAddress @relation(fields: [userId], references: [userId])
+  userId String @unique
+  @@id([userId])
+}
+
+model PeriodOfAddressResult {
+  close CloseOfPeriod?
+  open OpenOfPeriod?
+  openingHour OpeningHoursOfAddressResult @relation(fields: [userId], references: [userId])
+  userId String @unique
+  @@id([userId])
+}
+model CloseOfPeriod {
+  day Float
+  time String
+  period PeriodOfAddressResult @relation(fields: [userId], references: [userId])
+  userId String @unique
+  @@id([userId])
+}
+model OpenOfPeriod {
+  day Float
+  time String
+  period PeriodOfAddressResult @relation(fields: [userId], references: [userId])
+  userId String @unique
+  @@id([userId])
+}
+
+model PhotoOfAddressResult {
+  height Float
+htmlAttributions Json
+photoReference Json
+width Float
+addressResult ResultOfAddress @relation(fields: [userId], references: [userId])
+  userId String @unique
+  
+  @@id([userId])
+}
+
+model PlusCodeOfAddressResult {
+  addressResult ResultOfAddress @relation(fields: [userId], references: [userId])
+  userId String @unique
+  
+  @@id([userId])
+}
+model ReviewOfAddressResult {
+  addressResult ResultOfAddress @relation(fields: [userId], references: [userId])
+  userId String @unique
+  
+  @@id([userId])
+}
+
 model AdminUser {
   id           String   @id @default(uuid())
   username     String   @unique
@@ -92,7 +306,7 @@ model Collection {
   updatedAt   DateTime               @updatedAt
   products    Product[]
   outlets     CollectionsOfOutlets[]
-  adminId     Int
+  adminId     Float
 
   @@index([adminId])
 }
@@ -104,8 +318,8 @@ model Product {
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
   varients     VarientsOfProducts[]
-  itemIds      Int[]
-  adminId      Int
+  itemIds      Float[]
+  adminId      Float
   collection   Collection           @relation(fields: [collectionId], references: [id])
   collectionId String
 
@@ -115,7 +329,7 @@ model Product {
 model Varient {
   id           String               @id @default(uuid())
   name         String
-  itemTypeId   Int
+  itemTypeId   Float
   itemTypeName String
   unit         UnitOfVarient?
   createdAt    DateTime             @default(now())
@@ -123,7 +337,7 @@ model Varient {
   products     VarientsOfProducts[]
   productId    String
   items        Item[]
-  adminId      Int
+  adminId      Float
 
   @@index([adminId])
 }
@@ -134,24 +348,24 @@ model Item {
   description     String       @default("Empty item description")
   type            TypeOfItems?
   typeId          String
-  buyingPrice     Int
-  additionalCost  Int
-  totalCost       Int
-  retailPrice     Int
-  discountedPrice Int
-  wholesalePrice  Int
-  invoicePrice    Int
+  buyingPrice     Float
+  additionalCost  Float
+  totalCost       Float
+  retailPrice     Float
+  discountedPrice Float
+  wholesalePrice  Float
+  invoicePrice    Float
   featuredImage   String
   productImage    String
-  weight          Int
+  weight          Float
 
   unit UnitOfItems?
 
-  volume    Int
-  quantity  Int
+  volume    Float
+  quantity  Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  adminId   Int
+  adminId   Float
   varient   Varient  @relation(fields: [varientId], references: [id])
   varientId String
 
@@ -164,7 +378,7 @@ model Unit {
   unitName  String
   createdAt DateTime        @default(now())
   updatedAt DateTime        @updatedAt
-  adminId   Int
+  adminId   Float
   varients  UnitOfVarient[]
 
   @@index([adminId])
@@ -176,7 +390,7 @@ model Type {
   items     TypeOfItems[]
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
-  adminId   Int
+  adminId   Float
 
   @@index([adminId])
 }
@@ -221,6 +435,7 @@ model UnitOfVarient {
 
   @@id([varientId, unitId])
 }
+
 model UnitOfItems {
   item   Item   @relation(fields: [itemId], references: [id])
   itemId String @unique

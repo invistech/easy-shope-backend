@@ -1,4 +1,4 @@
-import { IsString, IsDefined, IsDate, IsInt } from "class-validator";
+import { IsString, IsDefined, IsDate } from "class-validator";
 import { VarientsOfProducts, Collection } from "./";
 
 export class Product {
@@ -26,11 +26,9 @@ export class Product {
     varients!: VarientsOfProducts[];
 
     @IsDefined()
-    @IsInt()
     itemIds!: number;
 
     @IsDefined()
-    @IsInt()
     adminId!: number;
 
     @IsDefined()
