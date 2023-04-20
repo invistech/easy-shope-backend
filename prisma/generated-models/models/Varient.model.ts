@@ -1,4 +1,4 @@
-import { IsString, IsDefined, IsInt, IsOptional, IsDate } from "class-validator";
+import { IsString, IsDefined, IsOptional, IsDate } from "class-validator";
 import { UnitOfVarient, VarientsOfProducts, Item } from "./";
 
 export class Varient {
@@ -11,7 +11,6 @@ export class Varient {
     name!: string;
 
     @IsDefined()
-    @IsInt()
     itemTypeId!: number;
 
     @IsDefined()
@@ -40,6 +39,5 @@ export class Varient {
     items!: Item[];
 
     @IsDefined()
-    @IsInt()
     adminId!: number;
 }
