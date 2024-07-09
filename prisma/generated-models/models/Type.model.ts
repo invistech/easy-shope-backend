@@ -1,4 +1,4 @@
-import { IsString, IsDefined, IsDate, IsInt } from "class-validator";
+import { IsString, IsDefined, IsDate } from "class-validator";
 import { TypeOfItems } from "./";
 
 export class Type {
@@ -22,6 +22,5 @@ export class Type {
     updatedAt!: Date;
 
     @IsDefined()
-    @IsInt()
     adminId!: number;
 }

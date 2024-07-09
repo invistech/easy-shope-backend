@@ -1,4 +1,4 @@
-import { IsString, IsDefined, IsOptional, IsInt, IsDate } from "class-validator";
+import { IsString, IsDefined, IsOptional, IsDate } from "class-validator";
 import { TypeOfItems, UnitOfItems, Varient } from "./";
 
 export class Item {
@@ -22,31 +22,24 @@ export class Item {
     typeId!: string;
 
     @IsDefined()
-    @IsInt()
     buyingPrice!: number;
 
     @IsDefined()
-    @IsInt()
     additionalCost!: number;
 
     @IsDefined()
-    @IsInt()
     totalCost!: number;
 
     @IsDefined()
-    @IsInt()
     retailPrice!: number;
 
     @IsDefined()
-    @IsInt()
     discountedPrice!: number;
 
     @IsDefined()
-    @IsInt()
     wholesalePrice!: number;
 
     @IsDefined()
-    @IsInt()
     invoicePrice!: number;
 
     @IsDefined()
@@ -58,18 +51,15 @@ export class Item {
     productImage!: string;
 
     @IsDefined()
-    @IsInt()
     weight!: number;
 
     @IsOptional()
     unit?: UnitOfItems;
 
     @IsDefined()
-    @IsInt()
     volume!: number;
 
     @IsDefined()
-    @IsInt()
     quantity!: number;
 
     @IsDefined()
@@ -81,7 +71,6 @@ export class Item {
     updatedAt!: Date;
 
     @IsDefined()
-    @IsInt()
     adminId!: number;
 
     @IsDefined()

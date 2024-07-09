@@ -1,4 +1,4 @@
-import { IsString, IsDefined, IsDate, IsInt } from "class-validator";
+import { IsString, IsDefined, IsDate } from "class-validator";
 import { UnitOfItems, UnitOfVarient } from "./";
 
 export class Unit {
@@ -22,7 +22,6 @@ export class Unit {
     updatedAt!: Date;
 
     @IsDefined()
-    @IsInt()
     adminId!: number;
 
     @IsDefined()
